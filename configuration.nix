@@ -2,7 +2,6 @@
   imports = [
     (modulesPath + "/profiles/qemu-guest.nix")
     ./disk.nix
-    ./hetzner.nix
   ];
 
   boot.loader.grub = {
@@ -12,6 +11,10 @@
   };
 
   networking.hostName = "hetzner";
+  networking.firewall = {
+    enable = true;
+    allowedTCPPorts = [ 22 80 443 ];
+  };
 
   services.openssh = {
     enable = true;
@@ -26,8 +29,3 @@
 
   system.stateVersion = "25.05";
 }
-
-
-
-
-
