@@ -27,5 +27,8 @@
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIK2hjST+3bGWZhN7UOZshtJRFEr2hRHUUUh69W8tnana selim@desktop"
   ];
 
+  services.caddy.enable = true;
+  services.civ6.enable = true;
+
   system.stateVersion = "25.05";
 }
