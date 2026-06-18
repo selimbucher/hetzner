@@ -8,11 +8,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1781768975,
-        "narHash": "sha256-RLJ/j3cbhjzebjkhKuLzuMXDBjrnkAe7axnmshBSrSM=",
+        "lastModified": 1781796066,
+        "narHash": "sha256-QwgfcS76L+AxYBQOHDZN/U1+l+rHaJgleIkVvWtnvEA=",
         "owner": "selimbucher",
         "repo": "civ6.ch",
-        "rev": "424f4aa75768fbf671cea808b6a2016f79a340ad",
+        "rev": "bc8c3614497ddb4bf1f7a64b0673792f22c15c66",
         "type": "github"
       },
       "original": {
