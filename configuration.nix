@@ -2,6 +2,7 @@
   imports = [
     (modulesPath + "/profiles/qemu-guest.nix")
     ./disk.nix
+    ./secrets.nix
   ];
 
   boot.loader.grub = {
