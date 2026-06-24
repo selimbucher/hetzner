@@ -36,7 +36,7 @@
       fi
       chmod 700 "$REPO"
       install -Dm600 "$REPO/cloudflare-acme.env"              /etc/secrets/cloudflare-acme.env
-      install -Dm600 "$REPO/mailserver/password-selim"        /etc/mailserver/password-selim
+      install -Dm600 "$REPO/mailserver/password-me"           /etc/mailserver/password-me
       install -Dm600 "$REPO/mailserver/password-noreply-civ6" /etc/mailserver/password-noreply-civ6
     '';
   };
