@@ -3,6 +3,7 @@
     (modulesPath + "/profiles/qemu-guest.nix")
     ./disk.nix
     ./secrets.nix
+    ./webmail.nix
   ];
 
   boot.loader.grub = {
