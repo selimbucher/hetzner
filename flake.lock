@@ -24,11 +24,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1781939400,
-        "narHash": "sha256-i8RC6QJztZRq08Te++7CtVz7EGIbN3XiBEz6wJD0FSs=",
+        "lastModified": 1782336817,
+        "narHash": "sha256-5vpXDRa9lU+QZQt9c4eEz3IGpm1yX+Nr5IJUaH2+R7E=",
         "owner": "selimbucher",
         "repo": "civ6.ch",
-        "rev": "5a11fc0af7aa16f69dfa6f72737f8bc86153fcd5",
+        "rev": "26b37c1a120f4f25bf1fbd1572980456223418a9",
         "type": "github"
       },
       "original": {
@@ -150,11 +150,11 @@
         "simple-nixos-mailserver": "simple-nixos-mailserver"
       },
       "locked": {
-        "lastModified": 1781877421,
-        "narHash": "sha256-3vVvpzvk/1QTNhxRnMqWwGzmrNYmU7U2icaR/VELlCQ=",
+        "lastModified": 1782341933,
+        "narHash": "sha256-ppOLf18fh95ib7X7WrajlAa4841KyUWiI0C1i/YzZ9A=",
         "owner": "selimbucher",
         "repo": "mailserver",
-        "rev": "5820bd968bb8d966430afb9690a41c3835f49707",
+        "rev": "801b9cceead066ac789c8985087c0073046a1de6",
         "type": "github"
       },
       "original": {
@@ -198,11 +198,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1781667411,
-        "narHash": "sha256-XwqlonGK+A7V2DmZLyiZ3t2hfq+W7Z79FtB0DZfJJag=",
+        "lastModified": 1781892035,
+        "narHash": "sha256-e46EhlHo0jupcYCLE4QJRitd3+y+RgIQYNcfcCdLbKg=",
         "owner": "simple-nixos-mailserver",
         "repo": "nixos-mailserver",
-        "rev": "373f3751615b12698145d562f26dc503c6d66fcd",
+        "rev": "c37fd9c40877450716692b6478e6dda330dfc46a",
         "type": "gitlab"
       },
       "original": {
