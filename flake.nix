@@ -29,7 +29,7 @@
         disko.nixosModules.disko
         civ6.nixosModules.default
         mailserver.nixosModules.default
-        nix-minecraft.nixosModules.default
+        nix-minecraft.nixosModules.minecraft-servers
         { nixpkgs.overlays = [ nix-minecraft.overlays.default ]; }
         ./configuration.nix
         ./minecraft.nix
