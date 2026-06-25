@@ -7,7 +7,7 @@
 
     servers.paper = {
       enable = true;
-      package = pkgs.minecraftServers.paper-server;
+      package = pkgs.minecraftServers."paper-server";
 
       jvmOpts = "-Xms1G -Xmx4G -XX:+UseG1GC -XX:+ParallelRefProcEnabled -XX:MaxGCPauseMillis=200";
 
