@@ -15,9 +15,13 @@
       url = "github:selimbucher/mailserver";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    nix-minecraft = {
+      url = "github:Infinidoge/nix-minecraft";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { self, nixpkgs, disko, civ6, mailserver, ... }@inputs: {
+  outputs = { self, nixpkgs, disko, civ6, mailserver, nix-minecraft, ... }@inputs: {
     nixosConfigurations.hetzner = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       specialArgs = { inherit inputs; };
@@ -25,7 +29,10 @@
         disko.nixosModules.disko
         civ6.nixosModules.default
         mailserver.nixosModules.default
+        nix-minecraft.nixosModules.default
+        { nixpkgs.overlays = [ nix-minecraft.overlays.default ]; }
         ./configuration.nix
+        ./minecraft.nix
       ];
     };
   };
