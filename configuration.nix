@@ -3,6 +3,8 @@
     (modulesPath + "/profiles/qemu-guest.nix")
     ./disk.nix
     ./secrets.nix
+    ./dmarc.nix
+    ./life.nix
   ];
 
   boot.loader.grub = {
@@ -21,6 +23,17 @@
     enable = true;
     settings.PermitRootLogin = "prohibit-password";
     settings.PasswordAuthentication = false;
+    settings.KbdInteractiveAuthentication = false;  # close the last password-style path
+  };
+
+  # Ban repeat SSH brute-forcers (thousands of failed attempts seen). Keys can't be
+  # brute-forced, but this cuts log noise + attack surface. Never bans an established
+  # session, so it cannot lock out the current connection.
+  services.fail2ban = {
+    enable = true;
+    maxretry = 5;
+    bantime = "1h";
+    ignoreIP = [ "127.0.0.0/8" "::1" ];
   };
 
   users.users.root.openssh.authorizedKeys.keys = [

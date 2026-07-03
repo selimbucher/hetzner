@@ -15,7 +15,9 @@
     before = [
       "acme-order-renew-mail.selim.one.service"
       "postfix.service"
-      "dovecot2.service"
+      "dovecot.service"
+      "caddy.service"
+      "dmarc-report-converter.service"
     ];
     wantedBy = [ "multi-user.target" ];
     serviceConfig = {
@@ -36,8 +38,11 @@
       fi
       chmod 700 "$REPO"
       install -Dm600 "$REPO/cloudflare-acme.env"              /etc/secrets/cloudflare-acme.env
+      install -Dm600 "$REPO/caddy.env"                        /etc/secrets/caddy.env
       install -Dm600 "$REPO/mailserver/password-me"           /etc/mailserver/password-me
       install -Dm600 "$REPO/mailserver/password-noreply-civ6" /etc/mailserver/password-noreply-civ6
+      install -Dm600 "$REPO/mailserver/password-dmarc"        /etc/mailserver/password-dmarc
+      install -Dm600 "$REPO/mailserver/dmarc-imap-password"   /etc/mailserver/dmarc-imap-password
     '';
   };
 }

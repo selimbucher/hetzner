@@ -47,6 +47,19 @@ in
       ExecStart = "${wakeupScript}/bin/mc-wakeup";
       Restart    = "always";
       RestartSec = "2s";
+      # Hardening: this is the one custom root service on a public port (parses
+      # untrusted Minecraft packets), and it shares the box with sensitive life-system
+      # data under /root. ProtectHome=true makes /root + /home invisible to it, so even
+      # a proxy RCE cannot read /root/life-data. It only needs network + `systemctl
+      # start` (talks to /run/systemd), so these don't break it.
+      ProtectHome           = true;
+      NoNewPrivileges       = true;
+      PrivateTmp            = true;
+      ProtectKernelTunables = true;
+      ProtectKernelModules  = true;
+      ProtectControlGroups  = true;
+      RestrictSUIDSGID      = true;
+      RestrictAddressFamilies = [ "AF_INET" "AF_INET6" "AF_UNIX" ];
     };
   };
 
