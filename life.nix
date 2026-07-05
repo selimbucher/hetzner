@@ -1,4 +1,4 @@
-{ lib, ... }:
+{ lib, pkgs, ... }:
 let
   # Engine loops run on the same nix-built stdlib python that serves the web app —
   # no nix-shell wrapper needed; every loop is stdlib-only and shells out to the
@@ -128,6 +128,29 @@ in
   # web agent placed at /root/life-system/.web-python (stdlib only — no site deps);
   # code + secrets live under /root/life-system (rsync-deployed, not in the store).
   systemd.services = loopServices // {
+    cherryblossom-api = let
+      apiPy = pkgs.python3.withPackages (ps: [ ps.fastapi ps.uvicorn ps.pydantic ps.httpx ]);
+    in {
+      wantedBy = [ "multi-user.target" ];
+      after = [ "network.target" ];
+      description = "Cherryblossom API — product surface over the life engine";
+      environment = {
+        LIFE_V2_DATA = "/root/life-data-v2";
+        LIFE_API_USERS_DIR = "/root/life-users";
+        LIFE_API_DB = "/root/life-users/api.db";
+        LIFE_API_BASE_URL = "https://life.selim.one";
+        LIFE_MAIL_ENV = "/root/life-system/runtime/secrets/mail.env";
+        LIFE_CLAUDE_BIN = "/root/.local/bin/claude";
+        HOME = "/root";
+        PYTHONPATH = "/root/life-system/v2";
+      };
+      serviceConfig = {
+        ExecStart = "${apiPy}/bin/uvicorn api.main:app --host 127.0.0.1 --port 8790";
+        WorkingDirectory = "/root/life-system/v2";
+        Restart = "on-failure";
+        RestartSec = 5;
+      };
+    };
     life-web = {
       description = "Life System — web touchpoint backend for life.selim.one (127.0.0.1:8788)";
       wantedBy = [ "multi-user.target" ];
@@ -163,30 +186,4 @@ in
 
   systemd.timers = loopTimers;
 
-
-  # Cherryblossom product API (FastAPI) — /api/v1 behind Caddy on 8790.
-  # Selim is tenant 0 on the existing engine root; new tenants under /root/life-users.
-  systemd.services.cherryblossom-api = let
-    apiPy = pkgs.python3.withPackages (ps: [ ps.fastapi ps.uvicorn ps.pydantic ps.httpx ]);
-  in {
-    wantedBy = [ "multi-user.target" ];
-    after = [ "network.target" ];
-    description = "Cherryblossom API — product surface over the life engine";
-    environment = {
-      LIFE_V2_DATA = "/root/life-data-v2";
-      LIFE_API_USERS_DIR = "/root/life-users";
-      LIFE_API_DB = "/root/life-users/api.db";
-      LIFE_API_BASE_URL = "https://life.selim.one";
-      LIFE_MAIL_ENV = "/root/life-system/runtime/secrets/mail.env";
-      LIFE_CLAUDE_BIN = "/root/.local/bin/claude";
-      HOME = "/root";
-      PYTHONPATH = "/root/life-system/v2";
-    };
-    serviceConfig = {
-      ExecStart = "${apiPy}/bin/uvicorn api.main:app --host 127.0.0.1 --port 8790";
-      WorkingDirectory = "/root/life-system/v2";
-      Restart = "on-failure";
-      RestartSec = 5;
-    };
-  };
 }
