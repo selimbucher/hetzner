@@ -121,6 +121,10 @@ in
     }
     handle {
       root * /var/www/cherryblossom
+      @assets path /_app/*
+      header @assets Cache-Control "public, max-age=31536000, immutable"
+      @pages not path /_app/*
+      header @pages Cache-Control "no-cache"
       try_files {path} /index.html
       file_server
     }
