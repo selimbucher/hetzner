@@ -155,7 +155,7 @@ in
         LIFE_V2_DATA = "/root/life-data-v2";
         LIFE_API_USERS_DIR = "/root/life-users";
         LIFE_API_DB = "/root/life-users/api.db";
-        LIFE_API_BASE_URL = "https://life.selim.one";
+        LIFE_API_BASE_URL = "https://app.selim.one";
         LIFE_MAIL_ENV = "/root/life-system/runtime/secrets/mail.env";
         LIFE_CLAUDE_BIN = "/root/.local/bin/claude";
         HOME = "/root";
