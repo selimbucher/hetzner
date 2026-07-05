@@ -5,6 +5,7 @@
     ./secrets.nix
     ./dmarc.nix
     ./life.nix
+    ./firefly.nix
   ];
 
   boot.loader.grub = {
