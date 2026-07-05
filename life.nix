@@ -116,6 +116,9 @@ in
     handle /ingest/* {
       reverse_proxy 127.0.0.1:8787
     }
+    handle /api/* {
+      reverse_proxy 127.0.0.1:8790
+    }
     handle {
       reverse_proxy 127.0.0.1:8788
     }
@@ -159,4 +162,31 @@ in
   };
 
   systemd.timers = loopTimers;
+
+
+  # Cherryblossom product API (FastAPI) — /api/v1 behind Caddy on 8790.
+  # Selim is tenant 0 on the existing engine root; new tenants under /root/life-users.
+  systemd.services.cherryblossom-api = let
+    apiPy = pkgs.python3.withPackages (ps: [ ps.fastapi ps.uvicorn ps.pydantic ps.httpx ]);
+  in {
+    wantedBy = [ "multi-user.target" ];
+    after = [ "network.target" ];
+    description = "Cherryblossom API — product surface over the life engine";
+    environment = {
+      LIFE_V2_DATA = "/root/life-data-v2";
+      LIFE_API_USERS_DIR = "/root/life-users";
+      LIFE_API_DB = "/root/life-users/api.db";
+      LIFE_API_BASE_URL = "https://life.selim.one";
+      LIFE_MAIL_ENV = "/root/life-system/runtime/secrets/mail.env";
+      LIFE_CLAUDE_BIN = "/root/.local/bin/claude";
+      HOME = "/root";
+      PYTHONPATH = "/root/life-system/v2";
+    };
+    serviceConfig = {
+      ExecStart = "${apiPy}/bin/uvicorn api.main:app --host 127.0.0.1 --port 8790";
+      WorkingDirectory = "/root/life-system/v2";
+      Restart = "on-failure";
+      RestartSec = 5;
+    };
+  };
 }
