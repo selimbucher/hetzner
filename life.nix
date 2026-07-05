@@ -109,6 +109,23 @@ in
   # auth — devices can't send basic-auth); everything else goes to the v2 web touchpoint
   # (:8788, app-level auth; /cv is deliberately public). TLS via Caddy's automatic
   # HTTP-01 (port 80 is open); DNS record life.selim.one already exists.
+
+  # Cherryblossom portal — the product frontend (static SvelteKit build rsynced
+  # to /var/www/cherryblossom) sharing an origin with /api/* (cookie samesite).
+  services.caddy.virtualHosts."app.selim.one".extraConfig = ''
+    log {
+      output file /var/log/caddy/access-app.selim.one.log
+    }
+    handle /api/* {
+      reverse_proxy 127.0.0.1:8790
+    }
+    handle {
+      root * /var/www/cherryblossom
+      try_files {path} /index.html
+      file_server
+    }
+  '';
+
   services.caddy.virtualHosts."life.selim.one".extraConfig = ''
     log {
       output file /var/log/caddy/access-life.selim.one.log
