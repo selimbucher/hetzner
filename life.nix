@@ -158,6 +158,7 @@ in
         LIFE_API_BASE_URL = "https://app.selim.one";
         LIFE_MAIL_ENV = "/root/life-system/runtime/secrets/mail.env";
         LIFE_API_SELIM_EMAIL = "me@selim.one";
+        LIFE_API_KICK = "1";
         LIFE_CLAUDE_BIN = "/root/.local/bin/claude";
         HOME = "/root";
         PYTHONPATH = "/root/life-system/v2";
