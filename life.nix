@@ -1,15 +1,18 @@
-{ lib, pkgs, ... }:
+{ lib, pkgs, inputs, ... }:
 let
-  # Engine loops run on the same nix-built stdlib python that serves the web app —
-  # no nix-shell wrapper needed; every loop is stdlib-only and shells out to the
-  # pinned claude binary itself (v2/engine/model.py). Declared here (not a hand-
-  # placed venv like the old /root/life-system/.web-python) so it's reproducible
-  # from this flake alone, same as cherryblossom-api's env below (2026-07-10).
-  py = "${pkgs.python3}/bin/python3";
-  eng = "/root/life-system/v2/engine";
+  # The product's code comes from the life-system flake input, not a rsync-deployed
+  # checkout — a pinned, content-addressed store path (2026-07-10: retired the
+  # rsync + deploy.sh model entirely; bumping this input's lock + `nixos-rebuild
+  # switch` IS the deploy now). `src` is the input's own source tree; `engineEnv`/
+  # `apiEnv` are the Python environments life-system's own flake declares its code
+  # needs, so this file doesn't have to reconstruct them.
+  cb = inputs.life-system;
+  src = "${cb}/src";
+  py = "${cb.packages.${pkgs.system}.engineEnv}/bin/python3";
+  eng = "${src}/engine";
   envCommon = {
     HOME = "/root"; # claude CLI reads ~/.claude
-    LIFE_CLAUDE_BIN = "/root/life-system/.claude-code/bin/claude";
+    LIFE_CLAUDE_BIN = "${pkgs.claude-code}/bin/claude";
     LIFE_V2_DATA = "/root/life-data-v2";
     LIFE_V1_FEEDS = "/root/life-data";
   };
@@ -75,7 +78,7 @@ let
       desc = "run engine + web test suites against the deployed tree";
       cmds = [
         "${py} ${eng}/test_loops.py"
-        "${py} /root/life-system/v2/web/test_app.py"
+        "${py} ${src}/web/test_app.py"
       ];
     };
   };
@@ -102,18 +105,23 @@ let
     }) loops;
 in
 {
+  # claude-code is unfree; life-web/loops/cherryblossom-api all shell out to it
+  # (LIFE_CLAUDE_BIN above).
+  nixpkgs.config.allowUnfree = true;
+
   # The engine's schedule speaks SELIM's clock, not UTC — found 2026-07-03 when the
   # "Sat 09:00" touchpoint would have fired at 11:01 his time. Affects all timers and
   # log timestamps box-wide (mail/caddy logs shift too; nothing depends on UTC).
   time.timeZone = "Europe/Zurich";
 
   # Life System: /ingest/* stays on the v1 health-ingest service (:8787, bearer-token
-  # auth — devices can't send basic-auth); everything else goes to the v2 web touchpoint
+  # auth — devices can't send basic-auth); everything else goes to the web touchpoint
   # (:8788, app-level auth; /cv is deliberately public). TLS via Caddy's automatic
   # HTTP-01 (port 80 is open); DNS record life.selim.one already exists.
 
-  # Cherryblossom portal — the product frontend (static SvelteKit build rsynced
-  # to /var/www/cherryblossom) sharing an origin with /api/* (cookie samesite).
+  # Cherryblossom portal — the product frontend, served directly from the
+  # life-system flake input's built `frontend` package (a Nix store path, not an
+  # rsynced /var/www copy) — sharing an origin with /api/* (cookie samesite).
   services.caddy.virtualHosts."app.selim.one".extraConfig = ''
     log {
       output file /var/log/caddy/access-app.selim.one.log
@@ -122,7 +130,7 @@ in
       reverse_proxy 127.0.0.1:8790
     }
     handle {
-      root * /var/www/cherryblossom
+      root * ${cb.packages.${pkgs.system}.frontend}
       @assets path /_app/*
       header @assets Cache-Control "public, max-age=31536000, immutable"
       @pages not path /_app/*
@@ -147,15 +155,13 @@ in
     }
   '';
 
-  # v2 web touchpoint backend. The interpreter is this flake's own pkgs.python3
-  # (stdlib only — no site deps, see `py` above); code + secrets live under
-  # /root/life-system (rsync-deployed, not in the store — deliberately: it changes
-  # daily, and life-system's deploy.sh test-then-restart gate is the substitute for
-  # a store build; see its own OPERATIONS.md).
+  # Product code is built by the life-system flake input (see `cb`/`src`/`py`
+  # above) — a pinned, reproducible store path, not an rsynced checkout. Secrets
+  # and data deliberately stay OUTSIDE the store, at fixed absolute paths on the
+  # box (runtime/secrets/*.env, life-data*, life-users) — the flake input packages
+  # code only, never touches those.
   systemd.services = loopServices // {
-    cherryblossom-api = let
-      apiPy = pkgs.python3.withPackages (ps: [ ps.fastapi ps.uvicorn ps.pydantic ps.httpx ]);
-    in {
+    cherryblossom-api = {
       wantedBy = [ "multi-user.target" ];
       after = [ "network.target" ];
       description = "Cherryblossom API — product surface over the life engine";
@@ -167,13 +173,13 @@ in
         LIFE_MAIL_ENV = "/root/life-system/runtime/secrets/mail.env";
         LIFE_API_SELIM_EMAIL = "me@selim.one";
         LIFE_API_KICK = "1";
-        LIFE_CLAUDE_BIN = "/root/life-system/.claude-code/bin/claude";
+        LIFE_CLAUDE_BIN = "${pkgs.claude-code}/bin/claude";
         HOME = "/root";
-        PYTHONPATH = "/root/life-system/v2";
+        PYTHONPATH = src;
       };
       serviceConfig = {
-        ExecStart = "${apiPy}/bin/uvicorn api.main:app --host 127.0.0.1 --port 8790";
-        WorkingDirectory = "/root/life-system/v2";
+        ExecStart = "${cb.packages.${pkgs.system}.apiEnv}/bin/uvicorn api.main:app --host 127.0.0.1 --port 8790";
+        WorkingDirectory = src;
         Restart = "on-failure";
         RestartSec = 5;
       };
@@ -189,12 +195,12 @@ in
         LIFE_WEB_PORT = "8788";
         # the walkthrough feature calls the model synchronously (plan/unblock)
         HOME = "/root";
-        LIFE_CLAUDE_BIN = "/root/life-system/.claude-code/bin/claude";
+        LIFE_CLAUDE_BIN = "${pkgs.claude-code}/bin/claude";
         # typed calendar actions from coach/chat shell out to the caldav env
         LIFE_SYSTEM_SECRETS = "/root/life-system/runtime/secrets/icloud.env";
       };
       serviceConfig = {
-        ExecStart = "${py} /root/life-system/v2/web/app.py";
+        ExecStart = "${py} ${src}/web/app.py";
         Restart = "always";
         RestartSec = 5;
         # parses untrusted network input as root (code+secrets live under /root, so a
