@@ -2,8 +2,10 @@
 let
   # Engine loops run on the same nix-built stdlib python that serves the web app —
   # no nix-shell wrapper needed; every loop is stdlib-only and shells out to the
-  # pinned claude binary itself (v2/engine/model.py).
-  py = "/root/life-system/.web-python/bin/python3";
+  # pinned claude binary itself (v2/engine/model.py). Declared here (not a hand-
+  # placed venv like the old /root/life-system/.web-python) so it's reproducible
+  # from this flake alone, same as cherryblossom-api's env below (2026-07-10).
+  py = "${pkgs.python3}/bin/python3";
   eng = "/root/life-system/v2/engine";
   envCommon = {
     HOME = "/root"; # claude CLI reads ~/.claude
@@ -145,9 +147,11 @@ in
     }
   '';
 
-  # v2 web touchpoint backend. The interpreter is a nix-built venv-style python the
-  # web agent placed at /root/life-system/.web-python (stdlib only — no site deps);
-  # code + secrets live under /root/life-system (rsync-deployed, not in the store).
+  # v2 web touchpoint backend. The interpreter is this flake's own pkgs.python3
+  # (stdlib only — no site deps, see `py` above); code + secrets live under
+  # /root/life-system (rsync-deployed, not in the store — deliberately: it changes
+  # daily, and life-system's deploy.sh test-then-restart gate is the substitute for
+  # a store build; see its own OPERATIONS.md).
   systemd.services = loopServices // {
     cherryblossom-api = let
       apiPy = pkgs.python3.withPackages (ps: [ ps.fastapi ps.uvicorn ps.pydantic ps.httpx ]);
@@ -190,7 +194,7 @@ in
         LIFE_SYSTEM_SECRETS = "/root/life-system/runtime/secrets/icloud.env";
       };
       serviceConfig = {
-        ExecStart = "/root/life-system/.web-python/bin/python3 /root/life-system/v2/web/app.py";
+        ExecStart = "${py} /root/life-system/v2/web/app.py";
         Restart = "always";
         RestartSec = 5;
         # parses untrusted network input as root (code+secrets live under /root, so a
