@@ -118,7 +118,6 @@ in
   # Life System: /ingest/* stays on the v1 health-ingest service (:8787, bearer-token
   # auth — devices can't send basic-auth); everything else goes to the web touchpoint
   # TLS via Caddy's automatic
-  # HTTP-01 (port 80 is open); DNS record life.selim.one already exists.
 
   # Cherryblossom portal — the product frontend, served directly from the
   # life-system flake input's built `frontend` package (a Nix store path, not an
@@ -128,9 +127,7 @@ in
       output file /var/log/caddy/access-app.selim.one.log
     }
     handle /ingest/* {
-      # v1 telemetry (iOS Health Auto Export, activitywatch) — moved here from the
-      # life.selim.one vhost so devices can repoint before that vhost retires;
-      # both routes stay live during the transition.
+      # v1 telemetry (iOS Health Auto Export, screentime shortcut, activitywatch)
       reverse_proxy 127.0.0.1:8787
     }
     handle /api/* {
@@ -147,27 +144,6 @@ in
     }
   '';
 
-  # COMPATIBILITY SHIM (2026-07-12): the personal surface (life-web) is retired —
-  # app.selim.one is the product. This vhost survives only for device URLs that
-  # still point here: telemetry ingest (iOS Health Auto Export, activitywatch)
-  # and the Scriptable widget (rewritten onto the product api, same Basic
-  # creds). Humans get redirected. Remove the whole block once Selim's devices
-  # are repointed to app.selim.one.
-  services.caddy.virtualHosts."life.selim.one".extraConfig = ''
-    log {
-      output file /var/log/caddy/access-life.selim.one.log
-    }
-    handle /ingest/* {
-      reverse_proxy 127.0.0.1:8787
-    }
-    handle /api/widget {
-      rewrite * /api/v1/widget
-      reverse_proxy 127.0.0.1:8790
-    }
-    handle {
-      redir https://app.selim.one/app permanent
-    }
-  '';
 
   # Product code is built by the life-system flake input (see `cb`/`src`/`py`
   # above) — a pinned, reproducible store path, not an rsynced checkout. Secrets
@@ -185,9 +161,6 @@ in
         LIFE_API_DB = "/root/life-users/api.db";
         LIFE_API_BASE_URL = "https://app.selim.one";
         LIFE_MAIL_ENV = "/root/life-system/runtime/secrets/mail.env";
-        # the phone widget's Basic-auth creds — same file the retired personal
-        # surface used, so the Scriptable script only changed its URL
-        LIFE_API_WIDGET_BASIC_ENV = "/root/life-system/runtime/secrets/web.env";
         LIFE_API_SELIM_EMAIL = "me@selim.one";
         LIFE_API_KICK = "1";
         LIFE_CLAUDE_BIN = "${pkgs.claude-code}/bin/claude";
