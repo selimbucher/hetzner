@@ -78,7 +78,8 @@ let
       desc = "run engine + web test suites against the deployed tree";
       cmds = [
         "${py} ${eng}/test_loops.py"
-        "${py} ${src}/web/test_app.py"
+        "${py} ${eng}/test_ingest.py"
+        "${cb.packages.${pkgs.system}.apiEnv}/bin/python3 ${src}/api/test_api.py"
       ];
     };
   };
@@ -105,7 +106,7 @@ let
     }) loops;
 in
 {
-  # claude-code is unfree; life-web/loops/cherryblossom-api all shell out to it
+  # claude-code is unfree; the loops + cherryblossom-api shell out to it
   # (LIFE_CLAUDE_BIN above).
   nixpkgs.config.allowUnfree = true;
 
@@ -116,7 +117,7 @@ in
 
   # Life System: /ingest/* stays on the v1 health-ingest service (:8787, bearer-token
   # auth — devices can't send basic-auth); everything else goes to the web touchpoint
-  # (:8788, app-level auth; /cv is deliberately public). TLS via Caddy's automatic
+  # TLS via Caddy's automatic
   # HTTP-01 (port 80 is open); DNS record life.selim.one already exists.
 
   # Cherryblossom portal — the product frontend, served directly from the
@@ -146,6 +147,12 @@ in
     }
   '';
 
+  # COMPATIBILITY SHIM (2026-07-12): the personal surface (life-web) is retired —
+  # app.selim.one is the product. This vhost survives only for device URLs that
+  # still point here: telemetry ingest (iOS Health Auto Export, activitywatch)
+  # and the Scriptable widget (rewritten onto the product api, same Basic
+  # creds). Humans get redirected. Remove the whole block once Selim's devices
+  # are repointed to app.selim.one.
   services.caddy.virtualHosts."life.selim.one".extraConfig = ''
     log {
       output file /var/log/caddy/access-life.selim.one.log
@@ -153,11 +160,12 @@ in
     handle /ingest/* {
       reverse_proxy 127.0.0.1:8787
     }
-    handle /api/* {
+    handle /api/widget {
+      rewrite * /api/v1/widget
       reverse_proxy 127.0.0.1:8790
     }
     handle {
-      reverse_proxy 127.0.0.1:8788
+      redir https://app.selim.one/app permanent
     }
   '';
 
@@ -191,37 +199,6 @@ in
         WorkingDirectory = src;
         Restart = "on-failure";
         RestartSec = 5;
-      };
-    };
-    life-web = {
-      description = "Life System — web touchpoint backend for life.selim.one (127.0.0.1:8788)";
-      wantedBy = [ "multi-user.target" ];
-      after = [ "network.target" ];
-      environment = {
-        LIFE_V2_DATA = "/root/life-data-v2";
-        LIFE_V1_FEEDS = "/root/life-data";
-        LIFE_WEB_ENV = "/root/life-system/runtime/secrets/web.env";
-        LIFE_WEB_PORT = "8788";
-        # the walkthrough feature calls the model synchronously (plan/unblock)
-        HOME = "/root";
-        LIFE_CLAUDE_BIN = "${pkgs.claude-code}/bin/claude";
-        # typed calendar actions from coach/chat shell out to the caldav env
-        LIFE_SYSTEM_SECRETS = "/root/life-system/runtime/secrets/icloud.env";
-      };
-      serviceConfig = {
-        ExecStart = "${py} ${src}/web/app.py";
-        Restart = "always";
-        RestartSec = 5;
-        # parses untrusted network input as root (code+secrets live under /root, so a
-        # full user-split is backlog) — cheap blast-radius limits meanwhile:
-        NoNewPrivileges = true;
-        PrivateTmp = true;
-        ProtectKernelTunables = true;
-        ProtectKernelModules = true;
-        ProtectControlGroups = true;
-        RestrictSUIDSGID = true;
-        LockPersonality = true;
-        RestrictRealtime = true;
       };
     };
   };

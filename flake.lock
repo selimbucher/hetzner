@@ -141,11 +141,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1783880574,
-        "narHash": "sha256-JoOGaUAUiRtTfFlI98TSJ6cwDrVTOKR/6dUn0ax2qHs=",
+        "lastModified": 1783882511,
+        "narHash": "sha256-rTIvBSHiRDPhG7vx9gVOD0y8vMOcFKk+ddSHSY1oqgs=",
         "ref": "refs/heads/main",
-        "rev": "8c4aa28e7ac6b70b1262cce5d067101f24971d20",
-        "revCount": 289,
+        "rev": "27507f14b066acd1f245232b6c52b08f3cda5b3d",
+        "revCount": 290,
         "type": "git",
         "url": "ssh://git@github.com/selimbucher/life-system.git"
       },
