@@ -177,6 +177,9 @@ in
         LIFE_API_DB = "/root/life-users/api.db";
         LIFE_API_BASE_URL = "https://app.selim.one";
         LIFE_MAIL_ENV = "/root/life-system/runtime/secrets/mail.env";
+        # the phone widget's Basic-auth creds — same file the retired personal
+        # surface used, so the Scriptable script only changed its URL
+        LIFE_API_WIDGET_BASIC_ENV = "/root/life-system/runtime/secrets/web.env";
         LIFE_API_SELIM_EMAIL = "me@selim.one";
         LIFE_API_KICK = "1";
         LIFE_CLAUDE_BIN = "${pkgs.claude-code}/bin/claude";
