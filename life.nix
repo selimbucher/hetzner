@@ -126,6 +126,12 @@ in
     log {
       output file /var/log/caddy/access-app.selim.one.log
     }
+    handle /ingest/* {
+      # v1 telemetry (iOS Health Auto Export, activitywatch) — moved here from the
+      # life.selim.one vhost so devices can repoint before that vhost retires;
+      # both routes stay live during the transition.
+      reverse_proxy 127.0.0.1:8787
+    }
     handle /api/* {
       reverse_proxy 127.0.0.1:8790
     }
