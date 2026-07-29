@@ -18,6 +18,7 @@
       "dovecot.service"
       "caddy.service"
       "dmarc-report-converter.service"
+      "cloud-drive.service"
     ];
     wantedBy = [ "multi-user.target" ];
     serviceConfig = {
@@ -43,6 +44,7 @@
       install -Dm600 "$REPO/mailserver/password-noreply-civ6" /etc/mailserver/password-noreply-civ6
       install -Dm600 "$REPO/mailserver/password-dmarc"        /etc/mailserver/password-dmarc
       install -Dm600 "$REPO/mailserver/dmarc-imap-password"   /etc/mailserver/dmarc-imap-password
+      install -Dm600 "$REPO/drive-htpasswd"                   /etc/secrets/drive-htpasswd
     '';
   };
 }

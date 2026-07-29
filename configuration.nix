@@ -44,6 +44,7 @@
 
   services.caddy.enable = true;
   services.civ6.enable = true;
+  services.cloud-drive.enable = true;
 
   system.stateVersion = "25.05";
 }

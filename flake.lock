@@ -37,6 +37,26 @@
         "type": "github"
       }
     },
+    "cloud-drive": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1785326102,
+        "narHash": "sha256-sTd0VFFJ2piqAKEGGF1H2hsEW20bZRXB2QBPsINM5VY=",
+        "ref": "refs/heads/main",
+        "rev": "134380f5b3ae2af2d6973179e0b66fb2fd7441d8",
+        "revCount": 1,
+        "type": "git",
+        "url": "ssh://git@github.com/selimbucher/cloud-drive.git"
+      },
+      "original": {
+        "type": "git",
+        "url": "ssh://git@github.com/selimbucher/cloud-drive.git"
+      }
+    },
     "disko": {
       "inputs": {
         "nixpkgs": [
@@ -216,6 +236,7 @@
     "root": {
       "inputs": {
         "civ6": "civ6",
+        "cloud-drive": "cloud-drive",
         "disko": "disko",
         "life-system": "life-system",
         "mailserver": "mailserver",

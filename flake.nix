@@ -27,9 +27,14 @@
       url = "git+ssh://git@github.com/selimbucher/life-system.git";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    # rclone WebDAV cloud drive at drive.selim.one (local-disk backend).
+    cloud-drive = {
+      url = "git+ssh://git@github.com/selimbucher/cloud-drive.git";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { self, nixpkgs, disko, civ6, mailserver, nix-minecraft, life-system, ... }@inputs: {
+  outputs = { self, nixpkgs, disko, civ6, mailserver, nix-minecraft, life-system, cloud-drive, ... }@inputs: {
     nixosConfigurations.hetzner = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       specialArgs = { inherit inputs; };
@@ -38,6 +43,7 @@
         civ6.nixosModules.default
         mailserver.nixosModules.default
         nix-minecraft.nixosModules.minecraft-servers
+        cloud-drive.nixosModules.default
         { nixpkgs.overlays = [ nix-minecraft.overlays.default ]; }
         ./configuration.nix
         ./minecraft.nix
