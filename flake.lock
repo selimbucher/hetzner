@@ -44,11 +44,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1785326102,
-        "narHash": "sha256-sTd0VFFJ2piqAKEGGF1H2hsEW20bZRXB2QBPsINM5VY=",
+        "lastModified": 1785330201,
+        "narHash": "sha256-lhqlG/9yV/AYF51doByNKoeQf73ueP7jXHy3CzQ2YWw=",
         "ref": "refs/heads/main",
-        "rev": "134380f5b3ae2af2d6973179e0b66fb2fd7441d8",
-        "revCount": 1,
+        "rev": "735e1c17bfb7d3d3b7065577a735971b7b04a1e4",
+        "revCount": 2,
         "type": "git",
         "url": "ssh://git@github.com/selimbucher/cloud-drive.git"
       },
