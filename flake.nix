@@ -32,9 +32,14 @@
       url = "git+ssh://git@github.com/selimbucher/cloud-drive.git";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    # Sender logos for Thunderbird's message list at logos.selim.one.
+    mail-logos = {
+      url = "github:selimbucher/mail-logos";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { self, nixpkgs, disko, civ6, mailserver, nix-minecraft, life-system, cloud-drive, ... }@inputs: {
+  outputs = { self, nixpkgs, disko, civ6, mailserver, nix-minecraft, life-system, cloud-drive, mail-logos, ... }@inputs: {
     nixosConfigurations.hetzner = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       specialArgs = { inherit inputs; };
@@ -44,6 +49,7 @@
         mailserver.nixosModules.default
         nix-minecraft.nixosModules.minecraft-servers
         cloud-drive.nixosModules.default
+        mail-logos.nixosModules.default
         { nixpkgs.overlays = [ nix-minecraft.overlays.default ]; }
         ./configuration.nix
         ./minecraft.nix

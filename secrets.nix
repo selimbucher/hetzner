@@ -19,6 +19,7 @@
       "caddy.service"
       "dmarc-report-converter.service"
       "cloud-drive.service"
+      "mail-logos.service"
     ];
     wantedBy = [ "multi-user.target" ];
     serviceConfig = {
@@ -45,6 +46,7 @@
       install -Dm600 "$REPO/mailserver/password-dmarc"        /etc/mailserver/password-dmarc
       install -Dm600 "$REPO/mailserver/dmarc-imap-password"   /etc/mailserver/dmarc-imap-password
       install -Dm600 "$REPO/drive-htpasswd"                   /etc/secrets/drive-htpasswd
+      install -Dm600 "$REPO/mail-logos-token"                 /etc/secrets/mail-logos-token
     '';
   };
 }

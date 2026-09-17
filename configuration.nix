@@ -45,6 +45,11 @@
   services.caddy.enable = true;
   services.civ6.enable = true;
   services.cloud-drive.enable = true;
+  services.mail-logos = {
+    enable = true;
+    # only /<token>/<domain> is served; the token comes from hetzner-secrets
+    tokenFile = "/etc/secrets/mail-logos-token";
+  };
 
   system.stateVersion = "25.05";
 }
