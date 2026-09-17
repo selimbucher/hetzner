@@ -4,7 +4,9 @@
     ./disk.nix
     ./secrets.nix
     ./dmarc.nix
-    ./life.nix
+    # Cherryblossom, off for now: its frontend check needs playwright-driver.browsers,
+    # whose WebKit fails to build on nixpkgs 2026-09-16 (libmanette missing).
+    # ./life.nix
     ./firefly.nix
   ];
 
