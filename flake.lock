@@ -215,6 +215,26 @@
         "type": "github"
       }
     },
+    "music-sync": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1790148814,
+        "narHash": "sha256-8oLqwy564i7uFMUkZGDmgkxuZqw44h9nipyq7Q/Dnwc=",
+        "owner": "selimbucher",
+        "repo": "music-sync",
+        "rev": "e97eef097c890a338a460d6ceeccf0b7858d60a3",
+        "type": "github"
+      },
+      "original": {
+        "owner": "selimbucher",
+        "repo": "music-sync",
+        "type": "github"
+      }
+    },
     "nix-minecraft": {
       "inputs": {
         "flake-compat": "flake-compat_2",
@@ -261,6 +281,7 @@
         "life-system": "life-system",
         "mail-logos": "mail-logos",
         "mailserver": "mailserver",
+        "music-sync": "music-sync",
         "nix-minecraft": "nix-minecraft",
         "nixpkgs": "nixpkgs"
       }

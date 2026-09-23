@@ -8,6 +8,7 @@
     # whose WebKit fails to build on nixpkgs 2026-09-16 (libmanette missing).
     # ./life.nix
     ./firefly.nix
+    ./music.nix
   ];
 
   boot.loader.grub = {

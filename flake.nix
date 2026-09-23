@@ -37,9 +37,14 @@
       url = "github:selimbucher/mail-logos";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    # Apple Music <-> Spotify mirror: music-sync.service on a 15 min timer.
+    music-sync = {
+      url = "github:selimbucher/music-sync";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { self, nixpkgs, disko, civ6, mailserver, nix-minecraft, life-system, cloud-drive, mail-logos, ... }@inputs: {
+  outputs = { self, nixpkgs, disko, civ6, mailserver, nix-minecraft, life-system, cloud-drive, mail-logos, music-sync, ... }@inputs: {
     nixosConfigurations.hetzner = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       specialArgs = { inherit inputs; };
@@ -50,6 +55,7 @@
         nix-minecraft.nixosModules.minecraft-servers
         cloud-drive.nixosModules.default
         mail-logos.nixosModules.default
+        music-sync.nixosModules.default
         { nixpkgs.overlays = [ nix-minecraft.overlays.default ]; }
         ./configuration.nix
         ./minecraft.nix

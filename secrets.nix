@@ -20,6 +20,7 @@
       "dmarc-report-converter.service"
       "cloud-drive.service"
       "mail-logos.service"
+      "music-sync.service"
     ];
     wantedBy = [ "multi-user.target" ];
     serviceConfig = {
@@ -47,6 +48,15 @@
       install -Dm600 "$REPO/mailserver/dmarc-imap-password"   /etc/mailserver/dmarc-imap-password
       install -Dm600 "$REPO/drive-htpasswd"                   /etc/secrets/drive-htpasswd
       install -Dm600 "$REPO/mail-logos-token"                 /etc/secrets/mail-logos-token
+      # music-sync: guarded so a rebuild before the files exist changes nothing.
+      if [ -d "$REPO/music-sync" ]; then
+        install -Dm600 "$REPO/music-sync/apple-user-token"      /etc/secrets/music-sync/apple-user-token
+        install -Dm600 "$REPO/music-sync/spotify-client-id"     /etc/secrets/music-sync/spotify-client-id
+        install -Dm600 "$REPO/music-sync/spotify-client-secret" /etc/secrets/music-sync/spotify-client-secret
+        # the service rewrites this one on rotation: never overwrite a live copy
+        [ -e /var/lib/music-sync/spotify-refresh-token ] || \
+          install -Dm600 -o music-sync -g music-sync "$REPO/music-sync/spotify-refresh-token" /var/lib/music-sync/spotify-refresh-token
+      fi
     '';
   };
 }
