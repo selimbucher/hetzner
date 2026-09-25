@@ -19,7 +19,7 @@ in
 
     servers.paper = {
       enable = true;
-      package = pkgs.minecraftServers."paper-26_2-build_34";
+      package = pkgs.minecraftServers."paper-26_3-build_41";
       jvmOpts = "-Xms512M -Xmx2G -XX:+UseG1GC -XX:+ParallelRefProcEnabled -XX:MaxGCPauseMillis=200";
 
       serverProperties = {

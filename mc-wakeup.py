@@ -1,49 +1,17 @@
 """
 Minecraft wakeup proxy.
-- Paper sleeping: shows "Sleeping" MOTD; starts Paper on login.
-- Paper starting: shows "Starting... X%" in the server list (updates each ping).
+- Paper sleeping: shows "Sleeping" MOTD on status ping; starts Paper and
+  kicks the player with a reconnect message on login.
 - Paper up: transparent TCP proxy to localhost:25566.
 """
 import json
 import socket
 import subprocess
 import threading
-import time
 
-LISTEN_PORT          = 25565
-PAPER_PORT           = 25566
-SERVICE              = "minecraft-server-paper"
-EXPECTED_STARTUP_SEC = 25   # tune if Paper is consistently faster/slower
-STARTUP_TIMEOUT_SEC  = 90   # reset start time if server never came up
-
-_start_time      = None
-_start_time_lock = threading.Lock()
-
-
-def _mark_starting():
-    global _start_time
-    with _start_time_lock:
-        if _start_time is None:
-            _start_time = time.monotonic()
-
-
-def _clear_start_time():
-    global _start_time
-    with _start_time_lock:
-        _start_time = None
-
-
-def _startup_progress():
-    """Return 0-95 while starting, None when idle/sleeping."""
-    with _start_time_lock:
-        if _start_time is None:
-            return None
-        elapsed = time.monotonic() - _start_time
-        if elapsed > STARTUP_TIMEOUT_SEC:
-            # Server never came up — reset so next attempt works cleanly
-            _start_time = None
-            return None
-        return min(95, int(elapsed / EXPECTED_STARTUP_SEC * 100))
+LISTEN_PORT = 25565
+PAPER_PORT  = 25566
+SERVICE     = "minecraft-server-paper"
 
 
 # ── Protocol helpers ──────────────────────────────────────────────────────────
@@ -59,6 +27,7 @@ def _recv_exact(s, n):
 
 
 def _read_varint_raw(s):
+    """Read a VarInt from socket; return (value, raw_bytes)."""
     raw, n, shift = bytearray(), 0, 0
     for _ in range(5):
         b = s.recv(1)
@@ -74,6 +43,7 @@ def _read_varint_raw(s):
 
 
 def read_raw_packet(s):
+    """Return (raw_bytes, packet_id, payload) for one packet."""
     length, raw_len = _read_varint_raw(s)
     payload = _recv_exact(s, length)
     i, pid, shift = 0, 0, 0
@@ -112,9 +82,11 @@ def _encode_packet(pid, *parts):
 
 def parse_next_state(payload):
     i = 0
+    # Skip protocol version (varint)
     while payload[i] & 0x80:
         i += 1
     i += 1
+    # Skip server address string (varint length + bytes)
     slen, shift = 0, 0
     while True:
         b = payload[i]; i += 1
@@ -122,25 +94,17 @@ def parse_next_state(payload):
         if not (b & 0x80):
             break
         shift += 7
-    i += slen + 2
+    i += slen + 2  # string bytes + port (u16)
     return payload[i] & 0x7F
 
 
 # ── Responses ─────────────────────────────────────────────────────────────────
 
 def send_status(s):
-    progress = _startup_progress()
-    if progress is not None:
-        desc = f"§aStarting... {progress}%"
-        version_name = f"Starting {progress}%"
-    else:
-        desc = "§6Sleeping §8— §aconnect to wake up"
-        version_name = "Sleeping"
-
     status = {
-        "version": {"name": version_name, "protocol": -1},
+        "version": {"name": "Sleeping", "protocol": -1},
         "players": {"max": 0, "online": 0, "sample": []},
-        "description": {"text": desc},
+        "description": {"text": "§6Server sleeping §8— §aconnect to wake it up"},
     }
     s.sendall(_encode_packet(0x00, _encode_string(json.dumps(status))))
     try:
@@ -207,20 +171,18 @@ def handle(client):
         next_state = parse_next_state(payload)
 
         if paper_is_up():
-            _clear_start_time()
             proxy_connection(client, raw)
             return
 
         if next_state == 1:  # Status ping
-            read_raw_packet(client)
+            read_raw_packet(client)  # consume Status Request
             send_status(client)
         elif next_state == 2:  # Login
-            read_raw_packet(client)
-            _mark_starting()
+            read_raw_packet(client)  # consume Login Start
             subprocess.Popen(["systemctl", "start", SERVICE])
             send_disconnect(
                 client,
-                "§aServer is waking up!\n§7Watch the progress in the server list\n§7and reconnect when it hits 100%.",
+                "§aServer is waking up!\n§7Reconnect in about 20 seconds.",
             )
     except Exception:
         pass
