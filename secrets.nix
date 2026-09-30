@@ -22,9 +22,13 @@
       "mail-logos.service"
     ];
     wantedBy = [ "multi-user.target" ];
+    startLimitIntervalSec = 0;
     serviceConfig = {
       Type = "oneshot";
       RemainAfterExit = true;
+      # DNS may not be up yet at boot even after network-online.target.
+      Restart = "on-failure";
+      RestartSec = "10s";
     };
     environment = {
       GIT_SSH_COMMAND = "ssh -i /etc/ssh/ssh_host_ed25519_key -o StrictHostKeyChecking=yes";
