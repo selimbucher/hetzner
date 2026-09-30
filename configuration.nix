@@ -41,8 +41,8 @@
   };
 
   users.users.root.openssh.authorizedKeys.keys = [
-    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEJ7wMSOe25u6BauXYT8xPjvrbWrJ6wVskOU0r/u8WsQ selim@laptop"
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIK2hjST+3bGWZhN7UOZshtJRFEr2hRHUUUh69W8tnana selim@desktop"
+    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEHhJsfSWGuKbAGbElK7JuzeTMqvmIAWtQO2D8JxuCJH selim@new-laptop"
   ];
 
   services.caddy.enable = true;
