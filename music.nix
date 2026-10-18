@@ -17,6 +17,7 @@
     # off: starring an album on Apple adds all its tracks to the library (= Liked Songs)
     syncAlbums = false;
     notifyEmail = "me@selim.one";
+    notifyFrom = "music-sync@selim.one";
     after = [ "hetzner-secrets.service" ];
   };
 }
