@@ -14,6 +14,8 @@
     spotifyRefreshTokenFile = "/var/lib/music-sync/spotify-refresh-token";
     # Apple's starred songs <-> this Spotify playlist, both ways
     spotifyFavoritesPlaylist = "Lieblingstitel";
+    # off: starring an album on Apple adds all its tracks to the library (= Liked Songs)
+    syncAlbums = false;
     notifyEmail = "me@selim.one";
     after = [ "hetzner-secrets.service" ];
   };
