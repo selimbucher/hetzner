@@ -222,11 +222,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1790148903,
-        "narHash": "sha256-4wiH7CO11Ce3Ds3wZkgveZByt7B4yFMl2RHv9sJOFe4=",
+        "lastModified": 1792342829,
+        "narHash": "sha256-R8IbpwoCEn/Hw4CzDbZMqY8XhHl6S4zTl9rwWTwNt/4=",
         "owner": "selimbucher",
         "repo": "music-sync",
-        "rev": "a6c094bf06bcdbe7e1df7e2a4a93b87f8ff8240f",
+        "rev": "4d7c3984b7a536c2a7e7e1936c133e3c5d80707c",
         "type": "github"
       },
       "original": {
