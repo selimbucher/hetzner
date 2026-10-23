@@ -202,11 +202,11 @@
         "simple-nixos-mailserver": "simple-nixos-mailserver"
       },
       "locked": {
-        "lastModified": 1782341933,
-        "narHash": "sha256-ppOLf18fh95ib7X7WrajlAa4841KyUWiI0C1i/YzZ9A=",
+        "lastModified": 1792792737,
+        "narHash": "sha256-+1uTf1YrDJOuBz1Piqd5W5bYqrDgkPfFfjNs0RPaL78=",
         "owner": "selimbucher",
         "repo": "mailserver",
-        "rev": "801b9cceead066ac789c8985087c0073046a1de6",
+        "rev": "33468afe9f1370fe511e98a64fdcd86bd31aa30f",
         "type": "github"
       },
       "original": {
@@ -222,11 +222,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1792349986,
-        "narHash": "sha256-Be7CpwXdYZ9nKoQ9TBcgN69t65E97d1oRH3JYykTVQM=",
+        "lastModified": 1792768807,
+        "narHash": "sha256-AByZvqLZVkgk355t+IGcMOQniBeir8y70y8rpGsMLt8=",
         "owner": "selimbucher",
         "repo": "music-sync",
-        "rev": "f3c6f4fe5c0dfc31af917741aba36b2eea65f999",
+        "rev": "3d97612fc1510148276e276f931f7d5a7a891ff4",
         "type": "github"
       },
       "original": {
