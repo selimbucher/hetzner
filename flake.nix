@@ -8,7 +8,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     civ6 = {
-      url = "github:selimbucher/civ6.ch";
+      url = "git+ssh://git@github.com/selimbucher/civ6.ch";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     mailserver = {

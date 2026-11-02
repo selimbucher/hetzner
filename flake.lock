@@ -26,15 +26,15 @@
       "locked": {
         "lastModified": 1793622935,
         "narHash": "sha256-Timkm/EiRhUrhsYsSrpjM32zMhCl08zGPvxJEzJziqA=",
-        "owner": "selimbucher",
-        "repo": "civ6.ch",
+        "ref": "refs/heads/main",
         "rev": "269e85f3ad9a0356554300502399518a96f31e88",
-        "type": "github"
+        "revCount": 91,
+        "type": "git",
+        "url": "ssh://git@github.com/selimbucher/civ6.ch"
       },
       "original": {
-        "owner": "selimbucher",
-        "repo": "civ6.ch",
-        "type": "github"
+        "type": "git",
+        "url": "ssh://git@github.com/selimbucher/civ6.ch"
       }
     },
     "cloud-drive": {
