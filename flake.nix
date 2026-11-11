@@ -42,9 +42,14 @@
       url = "github:selimbucher/music-sync";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    # Headscale at tailnet.selim.one: my machines reach each other from any network.
+    tailnet = {
+      url = "github:selimbucher/tailnet";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { self, nixpkgs, disko, civ6, mailserver, nix-minecraft, life-system, cloud-drive, mail-logos, music-sync, ... }@inputs: {
+  outputs = { self, nixpkgs, disko, civ6, mailserver, nix-minecraft, life-system, cloud-drive, mail-logos, music-sync, tailnet, ... }@inputs: {
     nixosConfigurations.hetzner = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       specialArgs = { inherit inputs; };
@@ -56,6 +61,7 @@
         cloud-drive.nixosModules.default
         mail-logos.nixosModules.default
         music-sync.nixosModules.default
+        tailnet.nixosModules.default
         { nixpkgs.overlays = [ nix-minecraft.overlays.default ]; }
         ./configuration.nix
         ./minecraft.nix

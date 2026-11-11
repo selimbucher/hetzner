@@ -53,6 +53,7 @@
     # only /<token>/<domain> is served; the token comes from hetzner-secrets
     tokenFile = "/etc/secrets/mail-logos-token";
   };
+  services.tailnet.enable = true;
 
   system.stateVersion = "25.05";
 }

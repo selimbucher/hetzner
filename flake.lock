@@ -283,7 +283,8 @@
         "mailserver": "mailserver",
         "music-sync": "music-sync",
         "nix-minecraft": "nix-minecraft",
-        "nixpkgs": "nixpkgs"
+        "nixpkgs": "nixpkgs",
+        "tailnet": "tailnet"
       }
     },
     "simple-nixos-mailserver": {
@@ -337,6 +338,26 @@
       "original": {
         "owner": "nix-systems",
         "repo": "default",
+        "type": "github"
+      }
+    },
+    "tailnet": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1794409021,
+        "narHash": "sha256-CYRgAllyeWGq6c9wI+h9KwjByaNdsuQtYwZLOXt5ZG0=",
+        "owner": "selimbucher",
+        "repo": "tailnet",
+        "rev": "cc7c7b1cbd53133e78cfa4d52354fdd9c713254a",
+        "type": "github"
+      },
+      "original": {
+        "owner": "selimbucher",
+        "repo": "tailnet",
         "type": "github"
       }
     }
